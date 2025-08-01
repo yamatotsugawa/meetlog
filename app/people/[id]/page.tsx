@@ -1,11 +1,19 @@
 import { prisma } from "@/lib/db";
 import InteractionForm from "@/components/InteractionForm";
 
-export default async function PersonDetail({ params }: { params: { id: string } }) {
+// Next.js 15 では params は Promise です
+export default async function PersonDetail({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+
   const person = await prisma.person.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { interactions: { orderBy: { occurredAt: "desc" } } },
   });
+
   if (!person) return <main className="p-4">見つかりませんでした。</main>;
 
   return (
@@ -26,9 +34,11 @@ export default async function PersonDetail({ params }: { params: { id: string } 
           {person.interactions.map((i) => (
             <li key={i.id} className="rounded-xl border bg-white p-4">
               <div className="text-sm text-gray-600">
-                {i.occurredAt.toISOString().slice(0,16).replace("T"," ")} / {i.place ?? ""}
+                {i.occurredAt.toISOString().slice(0, 16).replace("T", " ")} / {i.place ?? ""}
               </div>
-              {i.talkedAbout && <div className="mt-2 whitespace-pre-wrap text-sm">{i.talkedAbout}</div>}
+              {i.talkedAbout && (
+                <div className="mt-2 whitespace-pre-wrap text-sm">{i.talkedAbout}</div>
+              )}
             </li>
           ))}
           {person.interactions.length === 0 && (
