@@ -1,13 +1,15 @@
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { personSchema } from "@/lib/validators";
+import type { ZodError } from "zod";
 
-function zodErrorToMessage(e: any) {
-  if (e?.issues?.length) {
-    // 1件目の分かりやすいメッセージを返す
-    return e.issues.map((i: any) => i.message).join(", ");
+function zodErrorToMessage(e: unknown) {
+  if (typeof e === "object" && e && "issues" in e) {
+    const ze = e as ZodError;
+    return ze.issues.map((i) => i.message).join(", ");
   }
-  return e?.message || "Bad Request";
+  if (e instanceof Error) return e.message;
+  return "Bad Request";
 }
 
 export async function GET() {
@@ -20,24 +22,21 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
+    const body = (await req.json()) as unknown;
     const parsed = personSchema.parse(body);
     const created = await prisma.person.create({
       data: {
         ...parsed,
-        // Prisma(Json) に配列を保存（未指定なら []）
         tags: Array.isArray(parsed.tags) ? parsed.tags : [],
-        // 日付文字列は Prisma が自動で Date 化できるが、明示してもOK
         firstMetAt: parsed.firstMetAt ? new Date(parsed.firstMetAt) : undefined,
         nextApptAt: parsed.nextApptAt ? new Date(parsed.nextApptAt) : undefined,
-      } as any,
+      },
       select: { id: true },
     });
     return NextResponse.json(created, { status: 201 });
-  } catch (e: any) {
+  } catch (e: unknown) {
     const msg = zodErrorToMessage(e);
-    // 開発中はサーバ側ログにも出す
-    console.error("[POST /api/people] error:", msg, e);
+    console.error("[POST /api/people] error:", msg);
     return NextResponse.json({ error: msg }, { status: 400 });
   }
 }

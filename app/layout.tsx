@@ -1,4 +1,5 @@
 import "./globals.css";
+import Link from "next/link";
 
 export const metadata = {
   title: "会った人メモ",
@@ -12,23 +13,21 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         {/* Header */}
         <header className="sticky top-0 z-30 border-b bg-white/80 backdrop-blur">
           <div className="mx-auto flex h-14 max-w-5xl items-center justify-between px-3 sm:px-4">
-            <a href="/" className="font-semibold tracking-tight">会った人メモ</a>
-            <a
+            <Link href="/" className="font-semibold tracking-tight">会った人メモ</Link>
+            <Link
               href="/people/new"
               className="rounded-lg bg-black px-3 py-1.5 text-sm font-medium text-white hover:opacity-90"
             >
               新規登録
-            </a>
+            </Link>
           </div>
         </header>
 
         {/* Page */}
-        <div className="mx-auto max-w-5xl px-3 pb-24 pt-4 sm:px-4">
-          {children}
-        </div>
+        <div className="mx-auto max-w-5xl px-3 pb-24 pt-4 sm:px-4">{children}</div>
 
         {/* Floating Action (mobile) */}
-        <a
+        <Link
           href="/people/new"
           className="fixed bottom-6 right-6 grid h-14 w-14 place-items-center rounded-full bg-black text-white shadow-lg hover:opacity-90 sm:hidden"
           aria-label="新規登録"
@@ -37,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" className="h-7 w-7" fill="currentColor">
             <path d="M11 11V6a1 1 0 1 1 2 0v5h5a1 1 0 1 1 0 2h-5v5a1 1 0 1 1-2 0v-5H6a1 1 0 1 1 0-2h5Z" />
           </svg>
-        </a>
+        </Link>
       </body>
     </html>
   );

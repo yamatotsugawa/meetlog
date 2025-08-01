@@ -42,11 +42,15 @@ export default function PersonForm() {
         return;
       }
       r.push(`/people/${data.id}`); // 詳細へ遷移
-    } catch (err: any) {
-      alert("通信エラー: " + (err?.message ?? "不明なエラー"));
+    // 中略...
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "不明なエラー";
+      alert("通信エラー: " + message);
     } finally {
       setSaving(false);
     }
+// 中略...
+
   }
 
   return (
