@@ -1,11 +1,10 @@
-// prisma/schema.prisma
-datasource db {
-  provider = "sqlite"
-  url      = env("DATABASE_URL")
-}
-
 generator client {
   provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum ContactTool {
@@ -45,13 +44,10 @@ model Person {
   firstMetAt       DateTime?
   firstMetHow      String?
   leadType         LeadType?
-  appearance       String?
-  personality      String?
-  impression       String?
-  followupPlan     String?
+  memo             String?       // ← ここに統合
   nextApptAt       DateTime?
   nextApptNote     String?
-  tags             Json?         // ["紹介", "大事", "仙台"]
+  tags             Json?
 
   interactions     Interaction[]
 

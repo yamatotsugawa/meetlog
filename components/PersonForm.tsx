@@ -7,7 +7,7 @@ export default function PersonForm() {
   const [saving, setSaving] = useState(false);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault(); // 画面遷移のデフォルト送信を止める
+    e.preventDefault();
     const fd = new FormData(e.currentTarget);
     setSaving(true);
 
@@ -21,10 +21,7 @@ export default function PersonForm() {
       firstMetAt: toISO(fd.get("firstMetAt") as string),
       firstMetHow: fd.get("firstMetHow"),
       leadType: fd.get("leadType") || undefined,
-      appearance: fd.get("appearance"),
-      personality: fd.get("personality"),
-      impression: fd.get("impression"),
-      followupPlan: fd.get("followupPlan"),
+      memo: fd.get("memo"), // ✅ 追加
       nextApptAt: toISO(fd.get("nextApptAt") as string),
       nextApptNote: fd.get("nextApptNote"),
       tags: splitTags(fd.get("tags") as string),
@@ -41,16 +38,13 @@ export default function PersonForm() {
         alert(data?.error || "保存に失敗しました");
         return;
       }
-      r.push(`/people/${data.id}`); // 詳細へ遷移
-    // 中略...
+      r.push(`/people/${data.id}`);
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "不明なエラー";
       alert("通信エラー: " + message);
     } finally {
       setSaving(false);
     }
-// 中略...
-
   }
 
   return (
@@ -86,10 +80,10 @@ export default function PersonForm() {
           ["OTHER", "その他"],
         ]}
       />
-      <Text name="appearance" label="見た目の特徴" />
-      <Text name="personality" label="性格" />
-      <Text name="impression" label="個人的な印象" />
-      <Text name="followupPlan" label="今後の対応（もう会わなくて良い等）" />
+
+      {/* ✅ ここに統合された「メモ」欄 */}
+      <Text name="memo" label="メモ（見た目・性格・印象・今後の対応など）" />
+
       <Input name="nextApptAt" label="次のアポ日時" type="datetime-local" />
       <Input name="nextApptNote" label="次アポの備考" />
       <Input name="tags" label="タグ（スペース or カンマ区切り）" />
@@ -129,6 +123,7 @@ function Input({
     </label>
   );
 }
+
 function Text({ name, label }: { name: string; label: string }) {
   return (
     <label className="block">
@@ -137,6 +132,7 @@ function Text({ name, label }: { name: string; label: string }) {
     </label>
   );
 }
+
 function Select({
   name,
   label,

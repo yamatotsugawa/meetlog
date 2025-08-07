@@ -1,7 +1,6 @@
 import { prisma } from "@/lib/db";
 import InteractionForm from "@/components/InteractionForm";
 
-// Next.js 15 では params は Promise です
 export default async function PersonDetail({
   params,
 }: {
@@ -20,7 +19,17 @@ export default async function PersonDetail({
     <main className="mx-auto max-w-3xl p-4 space-y-6">
       <section className="rounded-xl border bg-white p-4">
         <h1 className="text-xl font-bold">{person.name}</h1>
-        <div className="mt-1 text-sm text-gray-700">{person.company || ""}</div>
+        <div className="mt-1 text-sm text-gray-700">
+          {person.company || ""}
+        </div>
+
+        {/* ✅ メモがある場合に表示 */}
+        {person.memo && (
+          <div className="mt-4 text-sm whitespace-pre-wrap text-gray-800">
+            <h3 className="mb-1 font-semibold">メモ</h3>
+            {person.memo}
+          </div>
+        )}
       </section>
 
       <section className="rounded-xl border bg-white p-4">

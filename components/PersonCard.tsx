@@ -1,13 +1,7 @@
 import Link from "next/link";
-// 型だけ使うので "import type" にする（バンドルに含めない）
 import type { Person } from "@prisma/client";
-
-// ここを "./_ui/Badge" → "./Badge" に変更（ファイルが components/Badge.tsx のため）
 import { Badge } from "./_ui/Badge";
-
-// "@/lib/ui" が解決できない場合に備えて一旦相対にする（後述の方法Aで戻せます）
 import { getInitials, fmtDate } from "../lib/ui";
-
 
 export default function PersonCard({
   person,
@@ -36,8 +30,12 @@ export default function PersonCard({
               </span>
             )}
           </div>
-          <p className="truncate text-sm text-gray-600">{person.company || "（会社未登録）"}</p>
-          {subtitle && <p className="mt-1 truncate text-xs text-gray-500">{subtitle}</p>}
+          <p className="truncate text-sm text-gray-600">
+            {person.company || "（会社未登録）"}
+          </p>
+          {subtitle && (
+            <p className="mt-1 truncate text-xs text-gray-500">{subtitle}</p>
+          )}
           {tags.length > 0 && (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {tags.slice(0, 4).map((t) => (
@@ -49,8 +47,9 @@ export default function PersonCard({
         </div>
       </div>
 
-      {person.impression && (
-        <p className="mt-2 line-clamp-2 text-sm text-gray-700">{person.impression}</p>
+      {/* ✅ 修正：impression → memo に変更 */}
+      {person.memo && (
+        <p className="mt-2 line-clamp-2 text-sm text-gray-700">{person.memo}</p>
       )}
     </Link>
   );
